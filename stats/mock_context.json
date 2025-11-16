@@ -1,0 +1,13 @@
+{
+  "element": {
+    "idShort": "ProductCarbonFootprint",
+    "type": "Property",
+    "labels": {"en": "product carbon footprint", "de": "Produkt-CO2-Fußabdruck"},
+    "descriptions": {
+      "en": "total greenhouse-gas emissions of a product over its life cycle",
+      "de": "Summe der Treibhausgasemissionen eines Produkts über den Lebenszyklus"
+    },
+    "unit": "kg CO2e",
+    "lang_priority": ["en","de"]
+  }
+}

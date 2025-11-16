@@ -1,0 +1,38 @@
+{
+  "total": {
+    "admin-shell.io": 2932,
+    "0173-1": 445,
+    "www.w3.org": 285,
+    "iirds.tekom.de": 150,
+    "0112/2": 73,
+    "sandbox.dexpi.org": 24,
+    "schema.org": 12,
+    "purl.org": 7,
+    "sample.com": 6,
+    "example.com": 3,
+    "admin-shell-io": 1,
+    "api.eclass-cdp.com": 1,
+    "opcfoundation.org": 1
+  },
+  "by_kind": {
+    "IEC": {
+      "0112/2": 73
+    },
+    "IRDI": {
+      "0173-1": 445
+    },
+    "URL": {
+      "admin-shell.io": 2932,
+      "www.w3.org": 285,
+      "iirds.tekom.de": 150,
+      "sandbox.dexpi.org": 24,
+      "schema.org": 12,
+      "purl.org": 7,
+      "sample.com": 6,
+      "example.com": 3,
+      "admin-shell-io": 1,
+      "api.eclass-cdp.com": 1,
+      "opcfoundation.org": 1
+    }
+  }
+}

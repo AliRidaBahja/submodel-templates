@@ -1,0 +1,24 @@
+{
+  "total": {
+    "admin-shell.io": 1201,
+    "0173-1": 286,
+    "iirds.tekom.de": 75,
+    "0112/2": 63,
+    "admin-shell-io": 1,
+    "api.eclass-cdp.com": 1
+  },
+  "by_kind": {
+    "IEC": {
+      "0112/2": 63
+    },
+    "IRDI": {
+      "0173-1": 286
+    },
+    "URL": {
+      "admin-shell.io": 1201,
+      "iirds.tekom.de": 75,
+      "admin-shell-io": 1,
+      "api.eclass-cdp.com": 1
+    }
+  }
+}
