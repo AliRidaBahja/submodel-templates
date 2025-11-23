@@ -26,12 +26,14 @@ def descend_versions_and_pick_json(root: Path) -> List[Path]:
     for cur, dirs, _ in os.walk(root):
         curp = Path(cur)
 
+        # If this directory has a JSON (prefer *template*.json) -> pick and stop descending here
         chosen = pick_json_in_dir(curp)
         if chosen:
             picked.append(chosen)
             dirs[:] = []
             continue
 
+        # Otherwise, if there are numeric version children -> only descend into the highest version
         numeric = list_numeric_children(curp)
         if numeric:
             newest = max(numeric, key=lambda p: int(p.name))
@@ -73,17 +75,21 @@ def _extract_all_ref_values(ref: Any) -> List[str]:
     return values
 
 
-def collect_semantic_ids(node: Any, out: List[Tuple[str, str]]) -> None:
+def collect_semantic_ids(
+    node: Any,
+    out: List[Tuple[str, str, str]],
+    path: str = ""
+) -> None:
     """
     Collect ALL semanticId, semanticIdListElement, and supplementalSemanticIds
     occurrences in the tree.
 
-    For nodes without idShort, use "<no-idShort>".
+    For nodes without idShort, use "<no-idShort>" for the primary semanticId.
     For semanticIdListElement, suffix owner with " [LIST-ELEMENT]".
-    Supplemental semantic IDs are tied to the same owner (no extra suffix).
+    For supplementalSemanticIds, use owner '|_>' (same entity as the semanticId row above).
+    Also store the absolute JSON path so that get_by_path(root, path) can locate the node.
     """
     if isinstance(node, dict):
-        # base owner name
         base_idshort = node.get("idShort") if isinstance(node.get("idShort"), str) else "<no-idShort>"
 
         # semanticId of this node
@@ -91,7 +97,7 @@ def collect_semantic_ids(node: Any, out: List[Tuple[str, str]]) -> None:
         if isinstance(sid, dict):
             val = _extract_ref_value(sid)
             if val is not None:
-                out.append((base_idshort, val))
+                out.append((base_idshort, val, path))
 
         # semanticIdListElement of this node (SubmodelElementList)
         sid_le = node.get("semanticIdListElement")
@@ -99,21 +105,25 @@ def collect_semantic_ids(node: Any, out: List[Tuple[str, str]]) -> None:
             val_le = _extract_ref_value(sid_le)
             if val_le is not None:
                 owner = f"{base_idshort} [LIST-ELEMENT]"
-                out.append((owner, val_le))
+                out.append((owner, val_le, path))
 
-        # supplementalSemanticIds → hierarchical formatting
+        # supplementalSemanticIds (same entity as base_idshort, printed with arrow owner)
         supps = node.get("supplementalSemanticIds")
         if isinstance(supps, list):
             for ref in supps:
                 for v in _extract_all_ref_values(ref):
-                    out.append((f"{base_idshort} -> supplemental", v))
+                    out.append(("|_>", v, path))
 
-        for v in node.values():
-            collect_semantic_ids(v, out)
+        # recurse into dict children, tracking JSON path
+        for k, v in node.items():
+            subpath = f"{path}/{k}" if path else k
+            collect_semantic_ids(v, out, subpath)
 
     elif isinstance(node, list):
-        for item in node:
-            collect_semantic_ids(item, out)
+        # recurse into list children, tracking index in path
+        for idx, item in enumerate(node):
+            subpath = f"{path}/{idx}" if path else str(idx)
+            collect_semantic_ids(item, out, subpath)
 
 
 def collect_concept_descriptions(data: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -179,18 +189,22 @@ def match_concepts(semantic_id: str, cds_list: List[Dict[str, Any]]) -> List[Dic
 def pretty_print_submodel(
     file_path: Path,
     submodel_name: str,
-    sem_rows: List[Tuple[int, int, str, str, Optional[str], List[str], bool]],
+    sem_rows: List[Tuple[int, int, str, str, Optional[str], List[str], bool, str]],
     cd_rows: List[Tuple[int, int, Optional[str], str, List[str], bool]],
 ) -> None:
     """
     sem_rows:
       (global_sem_idx, local_sem_idx, owner_idShort, semanticId,
-       cd_idShort_or_None, cd_isCaseOf_list, missing_flag)
+       cd_idShort_or_None, cd_isCaseOf_list, missing_flag, abs_path)
 
     cd_rows:
       (global_cd_idx, local_cd_idx, cd_idShort_or_None, cd_id,
        cd_isCaseOf_list, is_unlinked_flag)
     """
+
+    # counts
+    missing_sem = sum(1 for r in sem_rows if r[6])
+    unlinked_cd = sum(1 for r in cd_rows if r[5])
 
     # ---------- semanticId table ----------
     if sem_rows:
@@ -200,12 +214,13 @@ def pretty_print_submodel(
         width_sid = max(len(o[3]) for o in sem_rows)
         width_cd = max(len(o[4]) if o[4] else len("NO_CONCEPT") for o in sem_rows)
         width_is = max(len(", ".join(o[5])) if o[5] else len("-") for o in sem_rows)
+        width_path = max(len(o[7]) for o in sem_rows)
 
         print()
-        print("=" * 110)
+        print("=" * 140)
         print(f"FILE: {file_path}")
         print(f"SUBMODEL: {submodel_name}")
-        print("=" * 110)
+        print("=" * 140)
 
         header = (
             f"{'G#'.rjust(width_g)}  "
@@ -213,12 +228,13 @@ def pretty_print_submodel(
             f"{'idShort'.ljust(width_owner)}   "
             f"{'semanticId'.ljust(width_sid)}   "
             f"{'conceptIdShort'.ljust(width_cd)}   "
-            f"{'cd_isCaseOf'.ljust(width_is)}"
+            f"{'cd_isCaseOf'.ljust(width_is)}   "
+            f"{'absPath'.ljust(width_path)}"
         )
         print(header)
-        print("-" * 110)
+        print("-" * 140)
 
-        for g_idx, l_idx, owner, sid, cd_short, iscase, missing in sem_rows:
+        for g_idx, l_idx, owner, sid, cd_short, iscase, missing, abs_path in sem_rows:
             mark = " (M)" if missing else ""
             owner_marked = f"{owner}{mark}"
             cd = cd_short if cd_short else "NO_CONCEPT"
@@ -230,7 +246,8 @@ def pretty_print_submodel(
                 f"{owner_marked.ljust(width_owner)}   "
                 f"{sid.ljust(width_sid)}   "
                 f"{cd.ljust(width_cd)}   "
-                f"{is_str.ljust(width_is)}"
+                f"{is_str.ljust(width_is)}   "
+                f"{abs_path.ljust(width_path)}"
             )
 
     # ---------- ConceptDescription table ----------
@@ -246,7 +263,7 @@ def pretty_print_submodel(
 
         print()
         print("CONCEPT DESCRIPTIONS (U = unlinked w.r.t this submodel)")
-        print("-" * 110)
+        print("-" * 140)
 
         header2 = (
             f"{'G#'.rjust(width_g2)}  "
@@ -256,7 +273,7 @@ def pretty_print_submodel(
             f"{'cd_isCaseOf'.ljust(width_is2)}"
         )
         print(header2)
-        print("-" * 110)
+        print("-" * 140)
 
         for g_idx, l_idx, cd_short, cid, iscase, is_unlinked in cd_rows:
             base_short = cd_short if cd_short else "<no-idShort>"
@@ -271,6 +288,11 @@ def pretty_print_submodel(
                 f"{cid.ljust(width_cid)}   "
                 f"{is_str.ljust(width_is2)}"
             )
+
+    # ---------- summary ----------
+    print()
+    print(f"SUMMARY: missing semanticIds (M): {missing_sem}, unlinked ConceptDescriptions (U): {unlinked_cd}")
+    print("=" * 140)
 
 
 # ---------- main ----------
@@ -325,15 +347,15 @@ def main() -> None:
 
             sm_name = sm.get("idShort") or "<no-submodel-idShort>"
 
-            # collect all semanticIds (owner_idShort, semanticId)
-            semantic_pairs: List[Tuple[str, str]] = []
+            # collect all semanticIds (owner / arrow marker, semanticId, absPath)
+            semantic_pairs: List[Tuple[str, str, str]] = []
             collect_semantic_ids(sm, semantic_pairs)
 
             # build semantic rows (with possible multiple CDs per semanticId)
-            sem_rows: List[Tuple[int, int, str, str, Optional[str], List[str], bool]] = []
+            sem_rows: List[Tuple[int, int, str, str, Optional[str], List[str], bool, str]] = []
             local_sem_idx = 1
 
-            for owner, sid in semantic_pairs:
+            for owner, sid, abs_path in semantic_pairs:
                 matches = match_concepts(sid, concepts)
 
                 if matches:
@@ -347,6 +369,7 @@ def main() -> None:
                                 cd.get("idShort"),
                                 cd.get("isCaseOf") or [],
                                 False,  # not missing
+                                abs_path,
                             )
                         )
                         global_sem_counter += 1
@@ -361,13 +384,14 @@ def main() -> None:
                             None,
                             [],
                             True,  # missing CD
+                            abs_path,
                         )
                     )
                     global_sem_counter += 1
                     local_sem_idx += 1
 
             # CDs: all of them, mark unlinked (U) if cd.id is not used by any semanticId in this submodel
-            sids_this_sm = {sid for _, sid in semantic_pairs}
+            sids_this_sm = {sid for _, sid, _ in semantic_pairs}
             cd_rows: List[Tuple[int, int, Optional[str], str, List[str], bool]] = []
             local_cd_idx = 1
 

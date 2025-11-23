@@ -1,0 +1,189 @@
+{
+    "idShort": "ProductImages",
+    "displayName": [
+    {
+        "language": "en",
+        "text": "Product images"
+    },
+    {
+        "language": "de",
+        "text": "Produktbilder"
+    }
+    ],
+    "description": [
+    {
+        "language": "en",
+        "text": "Image file for associated product provided in common format (.png, .jpg)"
+    }
+    ],
+    "semanticId": {
+    "type": "ExternalReference",
+    "keys": [
+        {
+        "type": "GlobalReference",
+        "value": "0173-1#02-ABM220#001"
+        }
+    ]
+    },
+    "supplementalSemanticIds": [
+    {
+        "type": "ExternalReference",
+        "keys": [
+        {
+            "type": "GlobalReference",
+            "value": "https://api.eclass-cdp.com/0173-1-02-ABM220-001"
+        }
+        ]
+    }
+    ],
+    "qualifiers": [
+    {
+        "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+            {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/SubmodelTemplates/SMT/Cardinality/1/0"
+            }
+        ]
+        },
+        "kind": "TemplateQualifier",
+        "type": "SMT/Cardinality",
+        "valueType": "xs:string",
+        "value": "ZeroToMany"
+    }
+    ],
+    "semanticIdListElement": {
+    "type": "ExternalReference",
+    "keys": [
+        {
+        "type": "GlobalReference",
+        "value": "0173-1#02-ABM220#001/0173-1#01-AHY911#001"
+        }
+    ]
+    },
+    "typeValueListElement": "SubmodelElementCollection",
+    "value": [
+    {
+        "displayName": [
+        {
+            "language": "en",
+            "text": "Product image"
+        },
+        {
+            "language": "de",
+            "text": "Produktbild"
+        }
+        ],
+        "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+            {
+            "type": "GlobalReference",
+            "value": "0173-1#02-ABM220#001/0173-1#01-AHY911#001"
+            }
+        ]
+        },
+        "supplementalSemanticIds": [
+        {
+            "type": "ExternalReference",
+            "keys": [
+            {
+                "type": "GlobalReference",
+                "value": "0173-1#02-ABM220#001~0/0173-1#01-AHY911#001"
+            },
+            {
+                "type": "GlobalReference",
+                "value": "https://api.eclass-cdp.com/0173-1-02-ABM220-001/0173-1-01-AHY911-001"
+            }
+            ]
+        }
+        ],
+        "value": [
+        {
+            "idShort": "ImageFile",
+            "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+                {
+                "type": "GlobalReference",
+                "value": "0173-1#02-ABK291#002"
+                }
+            ]
+            },
+            "qualifiers": [
+            {
+                "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                    {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/SubmodelTemplates/SMT/Cardinality/1/0"
+                    }
+                ]
+                },
+                "type": "SMT/Cardinality",
+                "valueType": "xs:string",
+                "value": "One"
+            }
+            ],
+            "value": "/aasx/files/agv1.jpg",
+            "contentType": "image/jpeg",
+            "modelType": "File"
+        },
+        {
+            "idShort": "ImageNote",
+            "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+                {
+                "type": "GlobalReference",
+                "value": "0173-1#02-ABL423#001"
+                }
+            ]
+            },
+            "supplementalSemanticIds": [
+            {
+                "type": "ExternalReference",
+                "keys": [
+                {
+                    "type": "GlobalReference",
+                    "value": "https://api.eclass-cdp.com/0173-1-02-ABL423-001"
+                }
+                ]
+            }
+            ],
+            "qualifiers": [
+            {
+                "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                    {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/SubmodelTemplates/SMT/Cardinality/1/0"
+                    }
+                ]
+                },
+                "type": "SMT/Cardinality",
+                "valueType": "xs:string",
+                "value": "ZeroToOne"
+            }
+            ],
+            "value": [
+            {
+                "language": "en",
+                "text": "example image"
+            },
+            {
+                "language": "de",
+                "text": "Beispielbild"
+            }
+            ],
+            "modelType": "MultiLanguageProperty"
+        }
+        ],
+        "modelType": "SubmodelElementCollection"
+    }
+    ],
+    "modelType": "SubmodelElementList"
+}

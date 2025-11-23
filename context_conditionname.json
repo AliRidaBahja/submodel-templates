@@ -1,0 +1,105 @@
+﻿{
+  "submodel": {
+    "idShort": "PredictiveMaintenance",
+    "semantic": {
+      "primary": [
+        "https://admin-shell.io/idta/SubmodelTemplate/PredictiveMaintenance/1/0"
+      ],
+      "listElement": [],
+      "supplemental": []
+    },
+    "conceptDescription": null
+  },
+  "parent_chain": [
+    {
+      "idShort": "RemainingUsefulLifePrediction",
+      "modelType": "SubmodelElementCollection",
+      "semantic": {
+        "primary": [
+          "https://admin-shell.io/idta/PredictiveMaintenance/RemainingUsefulLifePrediction/1/0"
+        ],
+        "listElement": [],
+        "supplemental": []
+      },
+      "conceptDescription": {
+        "id": "https://admin-shell.io/idta/PredictiveMaintenance/RemainingUsefulLifePrediction/1/0",
+        "idShort": "RemainingUsefulLifePrediction",
+        "description": {
+          "en": "Information about remaining useful life (RUL) prediction in the context of predictive maintenance",
+          "de": "Informationen ³ber die Prognose der nutzbaren Restlebensdauer (RUL) im Kontext der vorausschauenden Wartung"
+        }
+      },
+      "path": "submodels/0/submodelElements/0"
+    },
+    {
+      "idShort": "ListRULBoundaryConditions",
+      "modelType": "SubmodelElementList",
+      "semantic": {
+        "primary": [
+          "https://admin-shell.io/idta/PredictiveMaintenance/ListRULBoundaryConditions/1/0"
+        ],
+        "listElement": [],
+        "supplemental": []
+      },
+      "conceptDescription": {
+        "id": "https://admin-shell.io/idta/PredictiveMaintenance/ListRULBoundaryConditions/1/0",
+        "idShort": "ListRULBoundaryConditions",
+        "description": {
+          "en": "List of boundary conditions for which remaining useful life has been predicted",
+          "de": "Liste der Randbedingungen unter denen die nutzbare Restlebensdauer prognostiziert wurde"
+        }
+      },
+      "path": "submodels/0/submodelElements/0/value/3"
+    },
+    {
+      "idShort": null,
+      "modelType": "SubmodelElementCollection",
+      "semantic": {
+        "primary": [
+          "https://admin-shell.io/idta/PredictiveMaintenance/RULCondition/1/0"
+        ],
+        "listElement": [],
+        "supplemental": []
+      },
+      "conceptDescription": {
+        "id": "https://admin-shell.io/idta/PredictiveMaintenance/RULCondition/1/0",
+        "idShort": "ConditionName",
+        "description": {
+          "en": "Name of the indicator (process value, KPI, material property, asset property) describing a boundary condition for which RUL prediction is valid.",
+          "de": "Bezeichnung des Indikators (Prozesswert, KPI, Materialeigenschaft, Anlageneigenschaft), der eine Randbedingung beschreibt, f³r die die RUL-Vorhersage g³ltig ist."
+        }
+      },
+      "path": "submodels/0/submodelElements/0/value/3/value/0"
+    }
+  ],
+  "target": {
+    "idShort": "ConditionName",
+    "modelType": "Property",
+    "valueType": "xs:string",
+    "description": {
+      "en": "Name of the indicator (process value, KPI, material property, asset property) describing a boundary condition for which RUL prediction is valid.",
+      "de": "Bezeichnung des Indikators (Prozesswert, KPI, Materialeigenschaft, Anlageneigenschaft), der eine Randbedingung beschreibt, f³r die die RUL-Vorhersage g³ltig ist."
+    },
+    "semantic": {
+      "primary": [
+        "https://admin-shell.io/idta/PredictiveMaintenance/ConditionName/1/0"
+      ],
+      "listElement": [],
+      "supplemental": []
+    },
+    "qualifiers": [
+      {
+        "type": "SMT/Cardinality",
+        "kind": "TemplateQualifier",
+        "valueType": "xs:string",
+        "value": "One",
+        "semantic_uris": [
+          "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
+        ]
+      }
+    ],
+    "conceptDescription": null
+  },
+  "siblings": [],
+  "path": "submodels/0/submodelElements/0/value/3/value/0/value/0"
+}
