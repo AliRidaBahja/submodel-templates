@@ -254,6 +254,20 @@ def build_context_object(root: Dict[str, Any], full_path: str) -> Dict[str, Any]
     }
     return ctx
 
+def call_context(aas_json_path, aas_path_inside):
+
+    user_path = aas_path_inside.strip().lstrip("/")
+
+    # if user didn't include 'submodels/' prefix, assume first submodel
+    if not user_path.startswith("submodels/"):
+        full_path = "submodels/0/" + user_path
+    else:
+        full_path = user_path
+
+    with open(aas_json_path, "r", encoding="utf-8") as f:
+        aas_json = json.load(f)
+
+    return build_context_object(aas_json, full_path)
 
 # -------------------- main -------------------- #
 
